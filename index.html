@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitGlance — GitHub Profile Stats Summary</title>
+  <meta name="description"
+    content="Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays repos, stars, followers, and contribution streaks at a glance." />
+  <meta property="og:title" content="GitGlance — GitHub Profile Stats Summary" />
+  <meta property="og:description" content="Generate beautiful GitHub profile summary cards instantly." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <div id="app">
+    <section id="hero-section" class="hero">
+      <div class="hero-bg-grid"></div>
+      <div class="hero-glow hero-glow--purple"></div>
+      <div class="hero-glow hero-glow--cyan"></div>
+
+      <div class="hero-content">
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+            <path d="M9 18c-4.51 2-5-2-7-2" />
+          </svg>
+          <span>GitHub Profile Stats</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="hero-title-line">Visualize Your</span>
+          <span class="hero-title-line hero-title-gradient">GitHub Profile</span>
+        </h1>
+        <p class="hero-subtitle">Generate beautiful, shareable summary cards from any GitHub profile. See repos, stars,
+          followers, languages, and contribution streaks — all at a glance.</p>
+
+        <form id="search-form" class="search-container" autocomplete="off">
+          <div class="search-wrapper">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input id="username-input" type="text" class="search-input" placeholder="Enter a GitHub username..."
+              spellcheck="false" required />
+            <button id="search-btn" type="submit" class="search-btn">
+              <span class="search-btn-text">Generate</span>
+              <svg class="search-btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          <div id="search-error" class="search-error" role="alert"></div>
+        </form>
+
+        <div class="hero-examples">
+          <span class="hero-examples-label">Try:</span>
+          <button class="example-btn" data-username="i-viki">i-viki</button>
+          <button class="example-btn" data-username="torvalds">torvalds</button>
+          <button class="example-btn" data-username="sindresorhus">sindresorhus</button>
+          <button class="example-btn" data-username="tj">tj</button>
+        </div>
+
+        <div class="token-section">
+          <button id="token-toggle" class="token-toggle" type="button">
+            <svg class="token-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+            </svg>
+            <span id="token-toggle-text">Add GitHub Token for higher rate limits</span>
+            <svg class="token-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          <div id="token-panel" class="token-panel">
+            <div class="token-input-row">
+              <input id="token-input" type="password" class="token-input" placeholder="ghp_xxxxxxxxxxxx" spellcheck="false" autocomplete="off" />
+              <button id="token-save-btn" type="button" class="token-save-btn">Save</button>
+              <button id="token-clear-btn" type="button" class="token-clear-btn hidden">Clear</button>
+            </div>
+            <p class="token-hint">
+              <span id="token-status" class="token-status"></span>
+              Paste a <a href="https://github.com/settings/tokens/new?scopes=&description=GitGlance" target="_blank" rel="noopener">Personal Access Token</a> (no scopes needed) for <strong>5,000 req/hr</strong> instead of 60.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="card-section" class="card-section hidden">
+      <div class="card-section-bg"></div>
+      <div class="card-section-content">
+        <button id="back-btn" class="back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+          <span>New Search</span>
+        </button>
+
+        <div id="card-wrapper" class="card-wrapper"></div>
+
+        <div id="card-actions" class="card-actions">
+          <button id="download-btn" class="action-btn action-btn--primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            <span>Download PNG</span>
+          </button>
+          <button id="copy-link-btn" class="action-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            <span>Copy Link</span>
+          </button>
+          <button id="share-x-btn" class="action-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>Share on X</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Built with <span class="footer-heart">♥</span> by <a href="https://jayavignesh.dev" target="_blank"
+          rel="noopener"><strong>jv</strong></a> · Data from <a href="https://docs.github.com/en/rest" target="_blank"
+          rel="noopener">GitHub API</a></p>
+    </footer>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
