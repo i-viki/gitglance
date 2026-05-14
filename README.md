@@ -18,6 +18,7 @@
 - **Performance Tier Badging** — Automatically calculates and renders gamified S+/S/A/B developer ranks
 - **Top Repository Spotlight** — Highlights the most starred original repository with star/fork metrics
 - **Search History Persistence** — Saves recent profile searches locally for swift one-click switching
+- **README Badge Export** — Instantly copies a tailored Shields.io Markdown button link for embedding into your GitHub Profile README
 - **Instant Profile Cards** — Enter any GitHub username and generate a beautiful stats card
 - **Live Data** — Pulls real-time data from the GitHub REST API
 - **Stats at a Glance** — Repos, total stars, followers, and following counts
@@ -81,6 +82,7 @@ npm run preview
 4. Use the action buttons to:
    - **Download PNG** — Save the card as a high-resolution image
    - **Copy Link** — Copy a shareable URL with `?user=username`
+   - **README Badge** — Copy a Markdown snippet to embed a live interactive GitGlance badge directly into your GitHub Profile README
    - **Share on X** — Post the card link on Twitter/X
 
 ### URL Parameters

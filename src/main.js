@@ -18,6 +18,7 @@ const cardWrapper = document.getElementById('card-wrapper');
 const backBtn = document.getElementById('back-btn');
 const downloadBtn = document.getElementById('download-btn');
 const copyLinkBtn = document.getElementById('copy-link-btn');
+const copyBadgeBtn = document.getElementById('copy-badge-btn');
 const shareXBtn = document.getElementById('share-x-btn');
 
 const tokenToggle = document.getElementById('token-toggle');
@@ -156,6 +157,20 @@ copyLinkBtn.addEventListener('click', async () => {
     showToast('Could not copy link');
   }
 });
+
+if (copyBadgeBtn) {
+  copyBadgeBtn.addEventListener('click', async () => {
+    const url = new URL(window.location);
+    url.searchParams.set('user', currentUsername);
+    const badgeMd = `[![View GitGlance Stats](https://img.shields.io/badge/View_GitGlance_Stats-000000?style=for-the-badge&logo=github&logoColor=white)](${url.toString()})`;
+    try {
+      await navigator.clipboard.writeText(badgeMd);
+      showToast('README badge copied!');
+    } catch {
+      showToast('Could not copy badge');
+    }
+  });
+}
 
 shareXBtn.addEventListener('click', () => {
   const text = `Check out @${currentUsername}'s GitHub profile stats!`;
