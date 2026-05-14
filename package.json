@@ -1,8 +1,36 @@
 {
   "name": "gitglance",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Generate beautiful, shareable GitHub profile summary cards instantly with custom visual themes, tier badges, and live API data.",
   "private": true,
   "type": "module",
+  "author": {
+    "name": "jayavignesh",
+    "url": "https://jayavignesh.dev"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/i-viki/gitglance#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/i-viki/gitglance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/i-viki/gitglance/issues"
+  },
+  "keywords": [
+    "github",
+    "profile",
+    "stats",
+    "summary",
+    "card",
+    "generator",
+    "visualizer",
+    "glassmorphism",
+    "png-export"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
