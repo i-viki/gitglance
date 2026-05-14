@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitGlance — GitHub Profile Stats Summary</title>
+  <title>GitGlance - GitHub Profile Stats Summary</title>
   <meta name="description"
     content="Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays repos, stars, followers, and contribution streaks at a glance." />
   <meta property="og:title" content="GitGlance — GitHub Profile Stats Summary" />
@@ -40,7 +40,7 @@
           <span class="hero-title-line hero-title-gradient">GitHub Profile</span>
         </h1>
         <p class="hero-subtitle">Generate beautiful, shareable summary cards from any GitHub profile. See repos, stars,
-          followers, languages, and contribution streaks — all at a glance.</p>
+          followers, languages, and contribution streaks, all at a glance.</p>
 
         <form id="search-form" class="search-container" autocomplete="off">
           <div class="search-wrapper">
@@ -63,34 +63,44 @@
           <div id="search-error" class="search-error" role="alert"></div>
         </form>
 
+        <div id="recent-searches-container" class="recent-searches hidden">
+          <span class="hero-examples-label">Recent:</span>
+          <div id="recent-searches-list" class="recent-searches-list"></div>
+        </div>
+
         <div class="hero-examples">
           <span class="hero-examples-label">Try:</span>
-          <button class="example-btn" data-username="i-viki">i-viki</button>
-          <button class="example-btn" data-username="torvalds">torvalds</button>
-          <button class="example-btn" data-username="sindresorhus">sindresorhus</button>
-          <button class="example-btn" data-username="tj">tj</button>
+          <button type="button" class="example-btn" data-username="i-viki">i-viki</button>
+          <button type="button" class="example-btn" data-username="torvalds">torvalds</button>
+          <button type="button" class="example-btn" data-username="sindresorhus">sindresorhus</button>
+          <button type="button" class="example-btn" data-username="tj">tj</button>
         </div>
 
         <div class="token-section">
           <button id="token-toggle" class="token-toggle" type="button">
-            <svg class="token-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+            <svg class="token-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
             </svg>
             <span id="token-toggle-text">Add GitHub Token for higher rate limits</span>
-            <svg class="token-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m6 9 6 6 6-6"/>
+            <svg class="token-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
             </svg>
           </button>
           <div id="token-panel" class="token-panel">
             <div class="token-input-row">
-              <input id="token-input" type="password" class="token-input" placeholder="ghp_xxxxxxxxxxxx" spellcheck="false" autocomplete="off" />
+              <input id="token-input" type="password" class="token-input" placeholder="ghp_xxxxxxxxxxxx"
+                spellcheck="false" autocomplete="off" />
               <button id="token-save-btn" type="button" class="token-save-btn">Save</button>
               <button id="token-clear-btn" type="button" class="token-clear-btn hidden">Clear</button>
             </div>
             <p class="token-hint">
               <span id="token-status" class="token-status"></span>
-              Paste a <a href="https://github.com/settings/tokens/new?scopes=&description=GitGlance" target="_blank" rel="noopener">Personal Access Token</a> (no scopes needed) for <strong>5,000 req/hr</strong> instead of 60.
+              Paste a <a href="https://github.com/settings/tokens/new?scopes=&description=GitGlance" target="_blank"
+                rel="noopener">Personal Access Token</a> (no scopes needed) for <strong>5,000 req/hr</strong> instead of
+              60.
             </p>
           </div>
         </div>
@@ -100,14 +110,26 @@
     <section id="card-section" class="card-section hidden">
       <div class="card-section-bg"></div>
       <div class="card-section-content">
-        <button id="back-btn" class="back-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="m12 19-7-7 7-7" />
-            <path d="M19 12H5" />
-          </svg>
-          <span>New Search</span>
-        </button>
+        <div class="card-toolbar">
+          <button id="back-btn" class="back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="m12 19-7-7 7-7" />
+              <path d="M19 12H5" />
+            </svg>
+            <span>New Search</span>
+          </button>
+
+          <div class="theme-selector">
+            <span class="theme-label">Theme:</span>
+            <div class="theme-options">
+              <button type="button" class="theme-btn active" data-theme="geist">Geist Dark</button>
+              <button type="button" class="theme-btn" data-theme="aurora">Aurora</button>
+              <button type="button" class="theme-btn" data-theme="cyberpunk">Cyberpunk</button>
+              <button type="button" class="theme-btn" data-theme="glass">Glass Frost</button>
+            </div>
+          </div>
+        </div>
 
         <div id="card-wrapper" class="card-wrapper"></div>
 

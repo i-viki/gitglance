@@ -196,6 +196,27 @@ function getLanguageColor(lang) {
   return colors[lang] || '#8b8b8b';
 }
 
+export function computeTopRepo(repos) {
+  const originalRepos = repos.filter(r => !r.fork);
+  const list = originalRepos.length > 0 ? originalRepos : repos;
+  if (list.length === 0) return null;
+
+  const top = list.reduce((prev, curr) =>
+    ((prev.stargazers_count || 0) > (curr.stargazers_count || 0)) ? prev : curr
+  );
+
+  if (!top || top.stargazers_count === undefined) return null;
+
+  return {
+    name: top.name,
+    description: top.description,
+    stargazers_count: top.stargazers_count,
+    forks_count: top.forks_count,
+    language: top.language,
+    language_color: top.language ? getLanguageColor(top.language) : null,
+  };
+}
+
 export async function fetchFullProfile(username) {
   const [profile, repos, contributions] = await Promise.all([
     fetchProfile(username),
@@ -216,6 +237,7 @@ export async function fetchFullProfile(username) {
     followers: profile.followers,
     following: profile.following,
     top_languages: computeLanguages(repos),
+    top_repo: computeTopRepo(repos),
     contributions,
     created_at: profile.created_at,
   };

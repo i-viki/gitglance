@@ -19,6 +19,17 @@
 }
 
 .hero-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  height: 600px;
+  background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 40%, transparent 80%);
+  pointer-events: none;
+}
+.hero-glow--cyan {
   display: none;
 }
 
@@ -176,6 +187,21 @@
   min-height: 18px;
 }
 
+.recent-searches {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease-out;
+}
+.recent-searches-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .hero-examples {
   display: flex;
   align-items: center;
@@ -201,6 +227,10 @@
   color: var(--text-primary);
   border-color: #333;
   background: #111;
+  transform: translateY(-1px) scale(1.03);
+}
+.example-btn:active {
+  transform: scale(0.97);
 }
 
 .token-section {

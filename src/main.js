@@ -101,6 +101,7 @@ async function generateCard(username) {
     window.history.replaceState({}, '', url);
 
     cardWrapper.innerHTML = renderCard(data);
+    saveRecentSearch(data.username);
 
     requestAnimationFrame(() => {
       const cardEl = document.getElementById('stats-card');
@@ -205,3 +206,59 @@ tokenClearBtn.addEventListener('click', () => {
 });
 
 refreshTokenUI();
+
+const RECENT_KEY = 'gitglance_recent_searches';
+
+function loadRecentSearches() {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRecentSearch(username) {
+  const recents = loadRecentSearches();
+  const filtered = recents.filter(u => u.toLowerCase() !== username.toLowerCase());
+  filtered.unshift(username);
+  if (filtered.length > 5) filtered.pop();
+  localStorage.setItem(RECENT_KEY, JSON.stringify(filtered));
+  renderRecentSearches();
+}
+
+function renderRecentSearches() {
+  const container = document.getElementById('recent-searches-container');
+  const list = document.getElementById('recent-searches-list');
+  if (!container || !list) return;
+
+  const recents = loadRecentSearches();
+  if (recents.length === 0) {
+    container.classList.add('hidden');
+    return;
+  }
+
+  container.classList.remove('hidden');
+  list.innerHTML = recents.map(u => `<button type="button" class="example-btn recent-btn" data-username="${u}">${u}</button>`).join('');
+
+  list.querySelectorAll('.recent-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const u = btn.dataset.username;
+      usernameInput.value = u;
+      generateCard(u);
+    });
+  });
+}
+
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const theme = btn.dataset.theme;
+    const cardEl = document.getElementById('stats-card');
+    if (cardEl) {
+      cardEl.dataset.theme = theme;
+    }
+  });
+});
+
+renderRecentSearches();

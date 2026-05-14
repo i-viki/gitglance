@@ -2,7 +2,7 @@
 
 **GitHub Profile Stats Summary Card Generator**
 
-> Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays repos, stars, followers, languages, and contribution streaks — all at a glance.
+> Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays repos, stars, followers, languages, and contribution streaks, all at a glance.
 
 [![Vite](https://img.shields.io/badge/Vite-8.0-000000?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-000000?logo=javascript&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
@@ -14,6 +14,10 @@
 
 ## Features
 
+- **Dynamic Visual Themes** — Switch instantly between pristine styles (*Geist Dark*, *Aurora*, *Cyberpunk*, *Glass Frost*)
+- **Performance Tier Badging** — Automatically calculates and renders gamified S+/S/A/B developer ranks
+- **Top Repository Spotlight** — Highlights the most starred original repository with star/fork metrics
+- **Search History Persistence** — Saves recent profile searches locally for swift one-click switching
 - **Instant Profile Cards** — Enter any GitHub username and generate a beautiful stats card
 - **Live Data** — Pulls real-time data from the GitHub REST API
 - **Stats at a Glance** — Repos, total stars, followers, and following counts

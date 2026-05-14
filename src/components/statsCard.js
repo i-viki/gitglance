@@ -23,6 +23,23 @@ export function renderSkeleton() {
   `;
 }
 
+export function calculateRank(data) {
+  const starsScore = (data.total_stars || 0) * 10;
+  const followersScore = (data.followers || 0) * 5;
+  const contributionsScore = (data.contributions?.total || 0) * 1;
+  const streakScore = (data.contributions?.longest || 0) * 10;
+  const reposScore = (data.public_repos || 0) * 2;
+
+  const totalScore = starsScore + followersScore + contributionsScore + streakScore + reposScore;
+
+  if (totalScore >= 5000) return { tier: 'S+', color: 'linear-gradient(135deg, #ffbc00, #ff0055)', shadow: 'rgba(255, 0, 85, 0.4)' };
+  if (totalScore >= 2000) return { tier: 'S', color: 'linear-gradient(135deg, #00f2fe, #4facfe)', shadow: 'rgba(0, 242, 254, 0.4)' };
+  if (totalScore >= 800) return { tier: 'A+', color: 'linear-gradient(135deg, #16a085, #f4d03f)', shadow: 'rgba(244, 208, 63, 0.4)' };
+  if (totalScore >= 300) return { tier: 'A', color: 'linear-gradient(135deg, #a8ff78, #78ffd6)', shadow: 'rgba(120, 255, 214, 0.4)' };
+  if (totalScore >= 100) return { tier: 'B', color: 'linear-gradient(135deg, #9d50bb, #6e48aa)', shadow: 'rgba(157, 80, 187, 0.4)' };
+  return { tier: 'C', color: 'linear-gradient(135deg, #bdc3c7, #2c3e50)', shadow: 'rgba(189, 195, 199, 0.4)' };
+}
+
 export function renderCard(data) {
   const metaItems = [];
   if (data.location) {
@@ -86,8 +103,38 @@ export function renderCard(data) {
     </div>
   ` : '';
 
+  const topRepoHtml = data.top_repo ? `
+    <div class="top-repo-spotlight">
+      <div class="top-repo-header">
+        <span class="top-repo-label">🌟 Top Repository</span>
+        <div class="top-repo-stats">
+          <span class="top-repo-stat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${formatNumber(data.top_repo.stargazers_count)}
+          </span>
+          <span class="top-repo-stat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 18H7a2 2 0 0 1-2-2V6"/><circle cx="5" cy="5" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="19" cy="13" r="2"/><path d="M12 14v-2a2 2 0 0 1 2-2h3"/></svg>
+            ${formatNumber(data.top_repo.forks_count)}
+          </span>
+        </div>
+      </div>
+      <div class="top-repo-name">${escapeHtml(data.top_repo.name)}</div>
+      ${data.top_repo.description ? `<div class="top-repo-desc">${escapeHtml(data.top_repo.description)}</div>` : ''}
+      ${data.top_repo.language ? `
+        <div class="top-repo-lang">
+          <span class="language-dot" style="background:${data.top_repo.language_color};color:${data.top_repo.language_color}"></span>
+          <span>${escapeHtml(data.top_repo.language)}</span>
+        </div>
+      ` : ''}
+    </div>
+  ` : '';
+
+  const rank = calculateRank(data);
+  const activeThemeBtn = document.querySelector('.theme-btn.active');
+  const currentTheme = activeThemeBtn ? activeThemeBtn.dataset.theme : 'geist';
+
   return `
-    <div class="stats-card" id="stats-card">
+    <div class="stats-card" id="stats-card" data-theme="${currentTheme}">
       <div class="card-profile">
         <img
           class="card-avatar"
@@ -96,7 +143,13 @@ export function renderCard(data) {
           crossorigin="anonymous"
         />
         <div class="card-user-info">
-          <div class="card-name">${escapeHtml(data.name)}</div>
+          <div class="card-name-row">
+            <div class="card-name">${escapeHtml(data.name)}</div>
+            <div class="rank-badge" style="background:${rank.color};box-shadow:0 0 10px ${rank.shadow}">
+              <span class="rank-badge-label">Rank</span>
+              <span class="rank-badge-tier">${rank.tier}</span>
+            </div>
+          </div>
           <div class="card-username">@${escapeHtml(data.username)}</div>
           ${data.bio ? `<div class="card-bio">${escapeHtml(data.bio)}</div>` : ''}
           ${metaItems.length > 0 ? `<div class="card-meta">${metaItems.join('')}</div>` : ''}
@@ -122,6 +175,7 @@ export function renderCard(data) {
         </div>
       </div>
 
+      ${topRepoHtml}
       ${streakHtml}
 
       <div class="card-languages">
