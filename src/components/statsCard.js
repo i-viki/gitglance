@@ -93,16 +93,24 @@ export function renderCard(data) {
   const statusHtml = data.status && data.status.message ? `<div class="user-status"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ${escapeHtml(data.status.message)}</div>` : '';
 
   const languagesHtml = data.top_languages.length > 0
-    ? data.top_languages.map(lang => `
-        <div class="language-item">
-          <span class="language-dot" style="background:${lang.color};color:${lang.color}"></span>
+    ? `
+      <div class="language-bar">
+        ${data.top_languages.map(lang => `
+          <div 
+            class="language-bar-segment" 
+            style="width:${lang.percentage}%;background:${lang.color}"
+            title="${lang.name}: ${lang.percentage}%"
+          ></div>
+        `).join('')}
+      </div>
+      ${data.top_languages.map(lang => `
+        <div class="language-item" title="${lang.name} makes up ${lang.percentage}% of non-forked code">
+          <span class="language-dot" style="background:${lang.color}"></span>
           <span class="language-name">${escapeHtml(lang.name)}</span>
-          <div class="language-bar-track">
-            <div class="language-bar-fill" style="background:${lang.color}" data-width="${lang.percentage}%"></div>
-          </div>
-          <span class="language-percent">${lang.percentage}%</span>
+          <span class="language-percentage">${lang.percentage}%</span>
         </div>
-      `).join('')
+      `).join('')}
+      `
     : '<p style="color:var(--text-muted);font-size:12px">No language data available</p>';
 
   const streakHtml = `

@@ -100,6 +100,16 @@ async function generateCard(username) {
     cardWrapper.innerHTML = renderCard(data);
     saveRecentSearch(data.username);
 
+    // Dynamic SEO update
+    const pageTitle = `GitGlance - ${data.name || data.username}'s GitHub Stats`;
+    document.title = pageTitle;
+    
+    // Update Meta Tags (for browsers and some bots)
+    const metaTitle = document.querySelector('meta[property="og:title"]');
+    if (metaTitle) metaTitle.setAttribute('content', pageTitle);
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', `Explore high-fidelity GitHub statistics, pinned repositories, and developer achievements for ${data.name || data.username}.`);
+
     if (data.rate_limit) {
       updateRateLimitUI(data.rate_limit);
     }
