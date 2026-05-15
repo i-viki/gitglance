@@ -30,6 +30,13 @@ export default async function handler(req, res) {
         isEmployee
         isDeveloperProgramMember
         twitterUsername
+        socialAccounts(first: 5) {
+          nodes {
+            provider
+            url
+            displayName
+          }
+        }
         status {
           emojiHTML
           message
@@ -40,7 +47,13 @@ export default async function handler(req, res) {
           totalCount
           nodes { stargazerCount }
         }
-        organizations(first: 1) { totalCount }
+        organizations(first: 10) {
+          nodes {
+            avatarUrl
+            name
+            login
+          }
+        }
         gists(first: 1) { totalCount }
         pullRequests(first: 1) { totalCount }
         issues(first: 1) { totalCount }

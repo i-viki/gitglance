@@ -67,13 +67,12 @@ export function renderCard(data) {
     `);
   }
   if (data.blog) {
-    const blogDisplay = data.blog.replace(/^https?:\/\//, '').replace(/\/$/, '');
-    metaItems.push(`
-      <span class="card-meta-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        ${escapeHtml(blogDisplay)}
-      </span>
-    `);
+    const displayBlog = data.blog.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    metaItems.push(`<div class="card-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>${escapeHtml(displayBlog)}</div>`);
+  }
+  if (data.created_at) {
+    const joinedDate = new Date(data.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    metaItems.push(`<div class="card-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Joined ${joinedDate}</div>`);
   }
   if (data.twitterUsername) {
     metaItems.push(`
@@ -106,28 +105,62 @@ export function renderCard(data) {
       `).join('')
     : '<p style="color:var(--text-muted);font-size:12px">No language data available</p>';
 
-  const streakHtml = (data.contributions.total > 0) ? `
-    <div class="card-streaks">
-      <div class="card-streaks-title">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-        <span>Contribution Activity</span>
-      </div>
+  const streakHtml = `
+    <div class="streak-card">
       <div class="streak-grid">
         <div class="streak-item">
-          <div class="streak-item-value" data-counter="${data.contributions.current}">${data.contributions.current}</div>
-          <div class="streak-item-label">Current Streak</div>
+          <span class="streak-value" data-counter="${data.contributions.current}">${data.contributions.current}</span>
+          <span class="streak-label">Current Streak</span>
+        </div>
+        <div class="streak-item streak-item--highlight">
+          <span class="streak-value" data-counter="${data.contributions.total}">${formatNumber(data.contributions.total)}</span>
+          <span class="streak-label">Total Contribs</span>
         </div>
         <div class="streak-item">
-          <div class="streak-item-value" data-counter="${data.contributions.longest}">${data.contributions.longest}</div>
-          <div class="streak-item-label">Longest Streak</div>
-        </div>
-        <div class="streak-item">
-          <div class="streak-item-value" data-counter="${data.contributions.total}">${data.contributions.total}</div>
-          <div class="streak-item-label">Recent Events</div>
+          <span class="streak-value" data-counter="${data.contributions.longest}">${data.contributions.longest}</span>
+          <span class="streak-label">Longest Streak</span>
         </div>
       </div>
+      
+      ${data.contributions.calendar ? `
+        <div class="contribution-heatmap">
+          ${data.contributions.calendar.slice(-70).map(day => `
+            <div 
+              class="heatmap-cell" 
+              style="background: ${day.contributionCount > 0 ? (day.color || '#00E5FF') : 'rgba(255,255,255,0.05)'}; 
+                     opacity: ${day.contributionCount > 0 ? 0.3 + (day.contributionCount * 0.1) : 1}"
+              title="${day.date}: ${day.contributionCount} contributions"
+            ></div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  const orgsHtml = data.advanced_stats?.organizations?.length > 0 ? `
+    <div class="org-spotlight">
+      <div class="card-stats-title">Affiliations</div>
+      <div class="org-list">
+        ${data.advanced_stats.organizations.map(org => `
+          <img src="${org.avatarUrl}" alt="${escapeHtml(org.name || org.login)}" class="org-avatar" title="${escapeHtml(org.name || org.login)}" crossorigin="anonymous" />
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const socialIcons = {
+    TWITTER: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>',
+    LINKEDIN: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>',
+    GENERIC: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>'
+  };
+
+  const socialsHtml = data.advanced_stats?.social_accounts?.length > 0 ? `
+    <div class="social-links">
+      ${data.advanced_stats.social_accounts.map(social => `
+        <a href="${social.url}" target="_blank" class="social-link" title="${social.displayName || social.provider}">
+          ${socialIcons[social.provider] || socialIcons.GENERIC}
+        </a>
+      `).join('')}
     </div>
   ` : '';
 
@@ -258,12 +291,16 @@ export function renderCard(data) {
               </div>
             </div>
           </div>
+          ${orgsHtml}
         </div>
       </div>
 
       <div class="card-footer">
-        <span class="card-footer-text">Member since ${formatDate(data.created_at)}</span>
-        <span class="card-footer-brand">GitGlance</span>
+        <div class="card-footer-brand">
+          <span class="brand-name">GitGlance</span>
+        </div>
+        ${socialsHtml}
+        <div class="card-footer-date">Generated ${new Date().toLocaleDateString()}</div>
       </div>
     </div>
   `;

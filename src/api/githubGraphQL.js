@@ -10,7 +10,44 @@ export const githubGraphql = ({ variables }) => {
         // Fetch from our own secure backend instead of GitHub directly
         axios.post(
             '/api/github',
-            { username: variables.username },
+            { 
+                username: variables.username,
+                query: `
+                status {
+                  emojiHTML
+                  message
+                }
+                organizations(first: 10) {
+                  nodes {
+                    avatarUrl
+                    name
+                    login
+                  }
+                }
+                socialAccounts(first: 5) {
+                  nodes {
+                    provider
+                    url
+                    displayName
+                  }
+                }
+                createdAt
+                contributionsCollection {
+                  contributionCalendar {
+                    totalContributions
+                    weeks {
+                      contributionDays {
+                        color
+                        contributionCount
+                        date
+                      }
+                    }
+                  }
+                }
+                pullRequests(first: 1) { totalCount }
+                issues(first: 1) { totalCount }
+                `
+            },
             {
                 headers: {
                     'Content-Type': 'application/json'

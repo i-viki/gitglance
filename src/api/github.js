@@ -261,9 +261,10 @@ export async function fetchFullProfile(username) {
       fork: repo.isFork
     }))),
     contributions: {
-      total: user.contributionsCollection?.totalCommitContributions || 0,
+      total: user.contributionsCollection?.contributionCalendar?.totalContributions || user.contributionsCollection?.totalCommitContributions || 0,
       current: currentStreak,
-      longest: longestStreak
+      longest: longestStreak,
+      calendar: contributionDays // Add full calendar for heatmap
     },
     status: user.status || null,
     twitterUsername: user.twitterUsername,
@@ -285,7 +286,8 @@ export async function fetchFullProfile(username) {
     })),
     // Advanced Stats
     advanced_stats: {
-      organizations: user.organizations?.totalCount || 0,
+      organizations: user.organizations?.nodes || [],
+      social_accounts: user.socialAccounts?.nodes || [],
       gists: user.gists?.totalCount || 0,
       pull_requests: user.contributionsCollection?.totalPullRequestContributions || user.pullRequests?.totalCount || 0,
       issues: user.contributionsCollection?.totalIssueContributions || user.issues?.totalCount || 0,
