@@ -3,7 +3,7 @@
 > **The Ultimate GitHub Profile Visualizer.** 
 > Generate high-fidelity, shareable summary cards of your GitHub contribution history, repositories, and achievements. Powered by a secure Vercel serverless GraphQL architecture.
 >
-> **Live Demo:** [gitglance.vercel.app](https://gitglance.vercel.app)
+> **Live Demo:** [igitglance.vercel.app](https://igitglance.vercel.app)
 
 [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
