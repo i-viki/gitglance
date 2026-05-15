@@ -2,165 +2,128 @@
 
 **GitHub Profile Stats Summary Card Generator**
 
-> Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays repos, stars, followers, languages, and contribution streaks, all at a glance.
+> Visualize any GitHub profile's contribution stats in a clean, shareable summary card. Displays pinned repositories, detailed contribution metrics, official developer badges, and top languages, all powered by a robust GraphQL serverless pipeline.
 
-[![Vite](https://img.shields.io/badge/Vite-8.0-000000?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-000000?logo=javascript&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![CSS](https://img.shields.io/badge/CSS-Minimal_Design-000000?logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
-[![GitHub API](https://img.shields.io/badge/GitHub_API-v3-000000?logo=github&logoColor=white)](https://docs.github.com/en/rest)
-[![License](https://img.shields.io/badge/License-MIT-000000.svg)](LICENSE)
-
----
-
-## Features
-
-- **Dynamic Visual Themes** — Switch instantly between pristine styles (*Geist Dark*, *Aurora*, *Cyberpunk*, *Glass Frost*)
-- **Performance Tier Badging** — Automatically calculates and renders gamified S+/S/A/B developer ranks
-- **Top Repository Spotlight** — Highlights the most starred original repository with star/fork metrics
-- **Search History Persistence** — Saves recent profile searches locally for swift one-click switching
-- **README Badge Export** — Instantly copies a tailored Shields.io Markdown button link for embedding into your GitHub Profile README
-- **Instant Profile Cards** — Enter any GitHub username and generate a beautiful stats card
-- **Live Data** — Pulls real-time data from the GitHub REST API
-- **Stats at a Glance** — Repos, total stars, followers, and following counts
-- **Top Languages** — Aggregated language breakdown with colored progress bars
-- **Contribution Activity** — Current streak, longest streak, and recent event counts
-- **Animated UI** — Count-up counters, growing bars, skeleton loading, and micro-animations
-- **Download as PNG** — Export the card as a high-resolution image
-- **Shareable Links** — Copy a direct link or share on X (Twitter)
-- **Responsive Design** — Looks great on desktop, tablet, and mobile
-- **Smart Caching** — Session-based caching to minimize API calls
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES2022-F7DF1E?logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Vercel](https://img.shields.io/badge/Vercel-Serverless-000000?logo=vercel&logoColor=white)](https://vercel.com/)
+[![GraphQL](https://img.shields.io/badge/GraphQL-GitHub_API-E10098?logo=graphql&logoColor=white)](https://docs.github.com/en/graphql)
+[![License](https://img.shields.io/badge/License-MIT-007EC6.svg)](LICENSE)
 
 ---
 
-## Tech Stack
+## 🚀 Features
+
+- **Dynamic Visual Themes** — Switch instantly between pristine styles (*Geist Dark*, *Aurora*, *Cyberpunk*, *Glass Frost*).
+- **Deep GraphQL Insights** — Securely fetches PR reviews, issues, repositories created, and custom developer statuses.
+- **Official Developer Badges** — Automatically detects and displays GitHub Star, Campus Expert, Hireable, and Staff badges.
+- **Pinned Repositories Spotlight** — High-fidelity rendering of the user's customized pinned repositories grid.
+- **Performance Tier Badging** — Automatically calculates and renders gamified S+/S/A/B developer ranks.
+- **Instant Profile Cards** — Enter any GitHub username and generate a beautiful stats card with zero client-side configuration.
+- **Download as PNG** — Export the card as a high-resolution image using `html2canvas-pro`.
+- **Shareable Links** — Copy a direct link or share effortlessly on X (Twitter).
+- **Responsive Layout** — Sleek 2-column grid that automatically snaps to a unified vertical layout on smaller screens.
+
+---
+
+## 🛠️ Tech Stack
 
 | Layer       | Technology                                                             |
 |-------------|------------------------------------------------------------------------|
-| **Bundler** | [Vite](https://vitejs.dev/)                                            |
-| **Language**| Vanilla JavaScript (ES Modules)                                        |
-| **Styling** | Vanilla CSS (Minimalist Monochrome Design System, Grid, Monospace)     |
-| **API**     | [GitHub REST API v3](https://docs.github.com/en/rest)                  |
-| **Export**  | [html2canvas-pro](https://www.npmjs.com/package/html2canvas-pro)       |
-| **Font**    | [Inter](https://fonts.google.com/specimen/Inter) (Google Fonts)        |
+| **Frontend**| ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) |
+| **Backend** | ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white) |
+| **API**     | ![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white) [GitHub GraphQL API](https://docs.github.com/en/graphql) |
+| **Styling** | ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) Vanilla CSS |
+| **Export**  | ![NPM](https://img.shields.io/badge/npm-CB3837?style=flat-square&logo=npm&logoColor=white) [html2canvas-pro](https://www.npmjs.com/package/html2canvas-pro) |
 
 ---
 
-## Getting Started
+## 💻 Local Development
+
+Because GitGlance utilizes a secure backend to mask the API token, local development requires the Vercel CLI.
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)
-- npm (comes with Node.js)
+- A GitHub Personal Access Token (PAT)
 
-### Installation
+### Setup
 
-```bash
-git clone https://github.com/i-viki/gitglance.git
-cd gitglance
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/i-viki/gitglance.git
+   cd gitglance
+   ```
 
-npm install
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-npm run dev
-```
+3. **Configure Environment Variables:**
+   Copy the example config and add your GitHub token.
+   ```bash
+   cp .env.example .env
+   ```
+   *Edit `.env` and insert your personal access token (`GITHUB_TOKEN=ghp_...`).*
 
-The app will be available at `http://localhost:3000`.
+4. **Run the local Vercel server:**
+   ```bash
+   npx vercel dev
+   ```
 
-### Build for Production
-
-```bash
-npm run build
-npm run preview
-```
-
----
-
-## Usage
-
-1. Open the app in your browser
-2. Enter a GitHub username in the search bar (or click one of the example buttons)
-3. View the generated stats card with animated counters and language bars
-4. Use the action buttons to:
-   - **Download PNG** — Save the card as a high-resolution image
-   - **Copy Link** — Copy a shareable URL with `?user=username`
-   - **README Badge** — Copy a Markdown snippet to embed a live interactive GitGlance badge directly into your GitHub Profile README
-   - **Share on X** — Post the card link on Twitter/X
-
-### URL Parameters
-
-You can link directly to a profile card:
-
-```
-https://your-domain.com/?user=torvalds
-```
+The app will be seamlessly served locally (typically at `http://localhost:3000`), with the backend API perfectly proxied.
 
 ---
 
-## Project Structure
+## 🌐 Deployment
+
+GitGlance is meticulously configured for zero-config deployment on Vercel.
+
+1. Push your repository to GitHub.
+2. Import the project into your [Vercel Dashboard](https://vercel.com/new).
+3. Under **Environment Variables**, add `GITHUB_TOKEN` and paste your token.
+4. Click **Deploy**. Vercel will automatically build the Vite frontend and provision the Serverless backend.
+
+---
+
+## 🏗️ Project Structure
 
 ```
 gitglance/
+├── api/
+│   └── github.js           # Secure Vercel Serverless GraphQL Backend
+├── src/
+│   ├── api/
+│   │   ├── githubGraphQL.js # Frontend API Caller
+│   │   ├── github.js        # Data Mapper & Aggregator
+│   │   └── cache.js         # Client-side sessionStorage manager
+│   ├── components/
+│   │   └── statsCard.js     # Core UI Rendering Engine
+│   ├── styles/
+│   │   ├── card.css         # Grid layouts & Theme tokens
+│   │   └── index.css        # Global variables & base styles
+│   └── main.js             # Application Controller
 ├── index.html
-├── package.json
 ├── vite.config.js
-├── public/
-│   └── favicon.svg
-└── src/
-    ├── main.js
-    ├── api/
-    │   ├── github.js
-    │   └── cache.js
-    ├── components/
-    │   └── statsCard.js
-    ├── utils/
-    │   ├── formatters.js
-    │   └── export.js
-    └── styles/
-        ├── index.css
-        ├── search.css
-        └── card.css
+└── package.json
 ```
 
 ---
 
-## API Rate Limits
+## 🎨 Design Highlights
 
-GitGlance uses the **GitHub REST API** with optional authentication:
-
-| Mode              | Rate Limit       |
-|-------------------|------------------|
-| Unauthenticated   | 60 requests/hr   |
-| With GitHub Token | 5,000 requests/hr|
-
-- Results are cached in `sessionStorage` for 10 minutes to minimize API calls
-- Click "Add GitHub Token" on the homepage to paste a [Personal Access Token](https://github.com/settings/tokens/new?scopes=&description=GitGlance) (no scopes needed)
-- If rate-limited, a friendly error message guides you to add a token
+- **Pure Minimalist Aesthetic** — Absolute pitch-black surfaces anchored with highly structured geometric alignments.
+- **High-Contrast Metallic Typography** — Pristine silver gradients paired with deep contrast text styling.
+- **Technical Monospace Hierarchies** — Nested isometric counter containers tagged with exact monospace data subheaders.
+- **Inverted Core Interactive Actions** — Ultra-modern pure white call-to-action triggers providing perfect focal prominence.
+- **Micro-Animations** — Count-up metric counters, staggered bar track filling, and silky-smooth skeleton loading states.
 
 ---
 
-## Design Highlights
-
-- **Pure Minimalist Aesthetic** — Absolute pitch black surfaces anchored with highly structured geometric alignments
-- **High-Contrast Metallic Typography** — Pristine silver gradients paired with deep contrast text styling
-- **Technical Monospace Hierarchies** — Nested isometric counter containers tagged with exact monospace data subheaders
-- **Inverted Core Interactive Actions** — Ultra-modern pure white call-to-action triggers providing perfect focal prominence
-- **Count-up Counters** — Numbers animate from 0 to their values
-- **Growing Bars** — Language bars animate to their target widths with custom progress tips
-- **Skeleton Loading** — Shimmer placeholders while data loads
-- **Toast Notifications** — Non-intrusive feedback for user actions
-
----
-
-## License
+## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
-
----
-
-## Credits
-
-- Data powered by [GitHub REST API](https://docs.github.com/en/rest)
-- Typography by [Inter](https://fonts.google.com/specimen/Inter)
-- PNG export by [html2canvas-pro](https://github.com/nicolo-ribaudo/html2canvas-pro)
 
 ---
 

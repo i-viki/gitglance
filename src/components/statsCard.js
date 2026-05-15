@@ -17,8 +17,16 @@ export function renderSkeleton() {
         <div class="skeleton skeleton-stat"></div>
         <div class="skeleton skeleton-stat"></div>
       </div>
-      <div class="skeleton" style="height:110px;margin-bottom:24px"></div>
-      <div class="skeleton" style="height:90px"></div>
+      <div class="card-columns">
+        <div class="card-col">
+          <div class="skeleton" style="height:110px;margin-bottom:24px"></div>
+          <div class="skeleton" style="height:140px"></div>
+        </div>
+        <div class="card-col">
+          <div class="skeleton" style="height:110px;margin-bottom:24px"></div>
+          <div class="skeleton" style="height:140px"></div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -67,6 +75,23 @@ export function renderCard(data) {
       </span>
     `);
   }
+  if (data.twitterUsername) {
+    metaItems.push(`
+      <span class="card-meta-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+        @${escapeHtml(data.twitterUsername)}
+      </span>
+    `);
+  }
+
+  const badgesHtml = [];
+  if (data.badges?.isGitHubStar) badgesHtml.push('<span class="user-badge star"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Star</span>');
+  if (data.badges?.isCampusExpert) badgesHtml.push('<span class="user-badge expert"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Expert</span>');
+  if (data.badges?.isEmployee) badgesHtml.push('<span class="user-badge staff"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Staff</span>');
+  if (data.badges?.isHireable) badgesHtml.push('<span class="user-badge hireable"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Hireable</span>');
+  if (data.badges?.isDeveloperProgramMember) badgesHtml.push('<span class="user-badge dev"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Dev</span>');
+
+  const statusHtml = data.status && data.status.message ? `<div class="user-status"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ${escapeHtml(data.status.message)}</div>` : '';
 
   const languagesHtml = data.top_languages.length > 0
     ? data.top_languages.map(lang => `
@@ -84,7 +109,10 @@ export function renderCard(data) {
   const streakHtml = (data.contributions.total > 0) ? `
     <div class="card-streaks">
       <div class="card-streaks-title">
-        <span>🔥</span> Contribution Activity
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Contribution Activity</span>
       </div>
       <div class="streak-grid">
         <div class="streak-item">
@@ -103,29 +131,30 @@ export function renderCard(data) {
     </div>
   ` : '';
 
-  const topRepoHtml = data.top_repo ? `
+  const reposToRender = data.pinned_repos?.length > 0 ? data.pinned_repos : (data.top_repo ? [data.top_repo] : []);
+  
+  const topRepoIcon = data.pinned_repos?.length > 0 
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.68V6a3 3 0 0 0-3-3h-0a3 3 0 0 0-3 3v4.68a2 2 0 0 1-1.11 1.87l-1.78.89A2 2 0 0 0 5 15.24Z"/></svg> Pinned' 
+    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Top Repository';
+
+  const topRepoHtml = reposToRender.length > 0 ? `
     <div class="top-repo-spotlight">
       <div class="top-repo-header">
-        <span class="top-repo-label">🌟 Top Repository</span>
-        <div class="top-repo-stats">
-          <span class="top-repo-stat">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            ${formatNumber(data.top_repo.stargazers_count)}
-          </span>
-          <span class="top-repo-stat">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 18H7a2 2 0 0 1-2-2V6"/><circle cx="5" cy="5" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="19" cy="13" r="2"/><path d="M12 14v-2a2 2 0 0 1 2-2h3"/></svg>
-            ${formatNumber(data.top_repo.forks_count)}
-          </span>
-        </div>
+        <span class="top-repo-label">${topRepoIcon}</span>
       </div>
-      <div class="top-repo-name">${escapeHtml(data.top_repo.name)}</div>
-      ${data.top_repo.description ? `<div class="top-repo-desc">${escapeHtml(data.top_repo.description)}</div>` : ''}
-      ${data.top_repo.language ? `
-        <div class="top-repo-lang">
-          <span class="language-dot" style="background:${data.top_repo.language_color};color:${data.top_repo.language_color}"></span>
-          <span>${escapeHtml(data.top_repo.language)}</span>
-        </div>
-      ` : ''}
+      <div class="pinned-repos-grid ${reposToRender.length === 1 ? 'single' : ''}">
+        ${reposToRender.map(repo => `
+          <div class="pinned-repo-item">
+            <div class="top-repo-name">${escapeHtml(repo.name)}</div>
+            ${repo.description ? `<div class="top-repo-desc">${escapeHtml(repo.description)}</div>` : ''}
+            <div class="top-repo-stats">
+              ${repo.language ? `<span class="top-repo-lang"><span class="language-dot" style="background:${repo.language_color};color:${repo.language_color}"></span>${escapeHtml(repo.language)}</span>` : ''}
+              <span class="top-repo-stat"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>${formatNumber(repo.stargazers_count)}</span>
+              <span class="top-repo-stat"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 18H7a2 2 0 0 1-2-2V6"/><circle cx="5" cy="5" r="2"/><circle cx="12" cy="20" r="2"/><circle cx="19" cy="13" r="2"/><path d="M12 14v-2a2 2 0 0 1 2-2h3"/></svg>${formatNumber(repo.forks_count)}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
     </div>
   ` : '';
 
@@ -145,12 +174,14 @@ export function renderCard(data) {
         <div class="card-user-info">
           <div class="card-name-row">
             <div class="card-name">${escapeHtml(data.name)}</div>
+            ${badgesHtml.join('')}
             <div class="rank-badge" style="background:${rank.color};box-shadow:0 0 10px ${rank.shadow}">
               <span class="rank-badge-label">Rank</span>
               <span class="rank-badge-tier">${rank.tier}</span>
             </div>
           </div>
           <div class="card-username">@${escapeHtml(data.username)}</div>
+          ${statusHtml}
           ${data.bio ? `<div class="card-bio">${escapeHtml(data.bio)}</div>` : ''}
           ${metaItems.length > 0 ? `<div class="card-meta">${metaItems.join('')}</div>` : ''}
         </div>
@@ -175,12 +206,59 @@ export function renderCard(data) {
         </div>
       </div>
 
-      ${topRepoHtml}
-      ${streakHtml}
-
-      <div class="card-languages">
-        <div class="card-languages-title">Top Languages</div>
-        ${languagesHtml}
+      <div class="card-columns">
+        <div class="card-col">
+          ${topRepoHtml}
+          <div class="card-languages">
+            <div class="card-languages-title">Top Languages</div>
+            ${languagesHtml}
+          </div>
+        </div>
+        
+        <div class="card-col">
+          ${streakHtml}
+          <div class="card-advanced-stats">
+            <div class="card-stats-title">Advanced Insights</div>
+            <div class="advanced-stats-grid">
+              <div class="adv-stat">
+                <span class="adv-stat-label">Commits</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.commits || 0}">${formatNumber(data.advanced_stats?.commits || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">PRs</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.pull_requests || 0}">${formatNumber(data.advanced_stats?.pull_requests || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Issues</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.issues || 0}">${formatNumber(data.advanced_stats?.issues || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">PR Reviews</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.pr_reviews || 0}">${formatNumber(data.advanced_stats?.pr_reviews || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Repos Created</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.repos_created || 0}">${formatNumber(data.advanced_stats?.repos_created || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Contributed To</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.contributed_to || 0}">${formatNumber(data.advanced_stats?.contributed_to || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Packages</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.packages || 0}">${formatNumber(data.advanced_stats?.packages || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Sponsoring</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.sponsoring || 0}">${formatNumber(data.advanced_stats?.sponsoring || 0)}</span>
+              </div>
+              <div class="adv-stat">
+                <span class="adv-stat-label">Sponsors</span>
+                <span class="adv-stat-value" data-counter="${data.advanced_stats?.sponsors || 0}">${formatNumber(data.advanced_stats?.sponsors || 0)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card-footer">

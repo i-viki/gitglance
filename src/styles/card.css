@@ -14,7 +14,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 540px;
+  max-width: 740px;
 }
 
 .card-toolbar {
@@ -241,6 +241,39 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.user-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.user-status svg {
+  color: var(--text-secondary);
+}
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.user-badge.hireable { background: rgba(0, 200, 83, 0.1); border-color: rgba(0, 200, 83, 0.4); color: #00e676; }
+.user-badge.star { background: rgba(255, 188, 0, 0.1); border-color: rgba(255, 188, 0, 0.4); color: #ffbc00; }
+.user-badge.expert { background: rgba(144, 19, 254, 0.1); border-color: rgba(144, 19, 254, 0.4); color: #d088ff; }
+.user-badge.staff { background: rgba(3, 102, 214, 0.1); border-color: rgba(3, 102, 214, 0.4); color: #58a6ff; }
 .card-meta {
   display: flex;
   gap: 14px;
@@ -274,18 +307,40 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 .top-repo-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 700;
   color: var(--accent-brand-cyan);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+.pinned-repos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pinned-repos-grid:not(.single) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.pinned-repo-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
 .top-repo-stats {
   display: flex;
   gap: 10px;
+  margin-top: auto;
+  padding-top: 8px;
 }
 .top-repo-stat {
   display: flex;
@@ -297,28 +352,40 @@
   font-weight: 600;
 }
 .top-repo-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .top-repo-desc {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
 }
 .top-repo-lang {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-size: 11px;
   color: var(--text-muted);
   font-weight: 500;
+  margin-right: auto;
+}
+
+.card-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .card-stats-row {
@@ -405,6 +472,46 @@
   font-size: 10px;
   color: var(--text-muted);
   margin-top: 4px;
+}
+
+.card-advanced-stats {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--card-badge-bg, #060606);
+  border: 1px solid var(--card-badge-border, #1a1a1a);
+  margin-bottom: 24px;
+}
+
+.card-stats-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.advanced-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.adv-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adv-stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.adv-stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
 }
 
 .card-languages {
@@ -573,11 +680,13 @@
   color: var(--text-muted);
 }
 
-@media (max-width: 520px) {
+@media (max-width: 680px) {
+  .card-columns { grid-template-columns: 1fr; gap: 0; }
   .card-stats-row { grid-template-columns: repeat(2, 1fr); }
   .streak-grid { grid-template-columns: 1fr; gap: 8px; }
   .card-actions { flex-direction: column; }
   .action-btn { justify-content: center; }
+  .pinned-repos-grid:not(.single) { grid-template-columns: 1fr; }
 }
 
 .toast {

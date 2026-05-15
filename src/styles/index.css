@@ -117,3 +117,49 @@ img {
   background: var(--border-medium);
   border-radius: var(--radius-pill);
 }
+
+.rate-limit-badge {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  animation: badgeFadeIn 0.5s ease-out;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes badgeFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rate-limit-badge.hidden {
+  opacity: 0;
+}
+
+.rate-limit-badge svg {
+  color: var(--text-muted);
+  opacity: 0.6;
+  width: 12px;
+  height: 12px;
+}
+
+#rate-limit-text {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}

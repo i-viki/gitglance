@@ -3,7 +3,6 @@ import './styles/search.css';
 import './styles/card.css';
 
 import { fetchFullProfile } from './api/github.js';
-import { getToken, setToken } from './api/github.js';
 import { getCached, setCache } from './api/cache.js';
 import { renderCard, renderSkeleton, animateCard } from './components/statsCard.js';
 import { exportAsPng } from './utils/export.js';
@@ -21,14 +20,6 @@ const copyLinkBtn = document.getElementById('copy-link-btn');
 const copyBadgeBtn = document.getElementById('copy-badge-btn');
 const shareXBtn = document.getElementById('share-x-btn');
 
-const tokenToggle = document.getElementById('token-toggle');
-const tokenToggleText = document.getElementById('token-toggle-text');
-const tokenPanel = document.getElementById('token-panel');
-const tokenInput = document.getElementById('token-input');
-const tokenSaveBtn = document.getElementById('token-save-btn');
-const tokenClearBtn = document.getElementById('token-clear-btn');
-const tokenStatus = document.getElementById('token-status');
-
 let currentUsername = '';
 
 function showCardView() {
@@ -44,6 +35,11 @@ function showSearchView() {
   const url = new URL(window.location);
   url.searchParams.delete('user');
   window.history.replaceState({}, '', url);
+
+  const globalBadge = document.getElementById('global-rate-limit');
+  if (globalBadge) {
+    globalBadge.classList.add('hidden');
+  }
 }
 
 function setLoading(loading) {
@@ -104,6 +100,10 @@ async function generateCard(username) {
     cardWrapper.innerHTML = renderCard(data);
     saveRecentSearch(data.username);
 
+    if (data.rate_limit) {
+      updateRateLimitUI(data.rate_limit);
+    }
+
     requestAnimationFrame(() => {
       const cardEl = document.getElementById('stats-card');
       if (cardEl) animateCard(cardEl);
@@ -162,7 +162,7 @@ if (copyBadgeBtn) {
   copyBadgeBtn.addEventListener('click', async () => {
     const url = new URL(window.location);
     url.searchParams.set('user', currentUsername);
-    const badgeMd = `[![View GitGlance Stats](https://img.shields.io/badge/View_GitGlance_Stats-000000?style=for-the-badge&logo=github&logoColor=white)](${url.toString()})`;
+    const badgeMd = `[![GitGlance Stats](https://img.shields.io/badge/GitGlance_Profile-00E5FF?style=for-the-badge&logo=github&logoColor=black)](${url.toString()})`;
     try {
       await navigator.clipboard.writeText(badgeMd);
       showToast('README badge copied!');
@@ -186,41 +186,18 @@ if (userParam) {
   generateCard(userParam);
 }
 
-function refreshTokenUI() {
-  const hasToken = !!getToken();
-  tokenToggle.classList.toggle('active', hasToken);
-  tokenToggleText.textContent = hasToken
-    ? 'GitHub Token connected ✓'
-    : 'Add GitHub Token for higher rate limits';
-  tokenStatus.className = hasToken ? 'token-status connected' : 'token-status';
-  tokenStatus.textContent = hasToken ? 'Connected — ' : '';
-  tokenSaveBtn.classList.toggle('hidden', hasToken);
-  tokenClearBtn.classList.toggle('hidden', !hasToken);
-  tokenInput.value = '';
-  if (hasToken) tokenInput.placeholder = '•••••••••••••••';
-  else tokenInput.placeholder = 'ghp_xxxxxxxxxxxx';
+function updateRateLimitUI(rateLimit) {
+  if (!rateLimit) return;
+  
+  const globalBadge = document.getElementById('global-rate-limit');
+  const rateLimitText = document.getElementById('rate-limit-text');
+  
+  if (globalBadge && rateLimitText) {
+    globalBadge.classList.remove('hidden');
+    rateLimitText.textContent = `${rateLimit.remaining} / ${rateLimit.limit} requests left`;
+  }
 }
 
-tokenToggle.addEventListener('click', () => {
-  const isOpen = tokenPanel.classList.toggle('open');
-  tokenToggle.classList.toggle('open', isOpen);
-});
-
-tokenSaveBtn.addEventListener('click', () => {
-  const val = tokenInput.value.trim();
-  if (!val) return;
-  setToken(val);
-  refreshTokenUI();
-  showToast('GitHub token saved!');
-});
-
-tokenClearBtn.addEventListener('click', () => {
-  setToken(null);
-  refreshTokenUI();
-  showToast('Token removed.');
-});
-
-refreshTokenUI();
 
 const RECENT_KEY = 'gitglance_recent_searches';
 

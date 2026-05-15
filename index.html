@@ -18,6 +18,12 @@
 </head>
 
 <body>
+  <div id="global-rate-limit" class="rate-limit-badge hidden">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 4l10 16H2L12 4z" />
+    </svg>
+    <span id="rate-limit-text"></span>
+  </div>
   <div id="app">
     <section id="hero-section" class="hero">
       <div class="hero-bg-grid"></div>
@@ -76,34 +82,7 @@
           <button type="button" class="example-btn" data-username="tj">tj</button>
         </div>
 
-        <div class="token-section">
-          <button id="token-toggle" class="token-toggle" type="button">
-            <svg class="token-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 9.9-1" />
-            </svg>
-            <span id="token-toggle-text">Add GitHub Token for higher rate limits</span>
-            <svg class="token-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-          <div id="token-panel" class="token-panel">
-            <div class="token-input-row">
-              <input id="token-input" type="password" class="token-input" placeholder="ghp_xxxxxxxxxxxx"
-                spellcheck="false" autocomplete="off" />
-              <button id="token-save-btn" type="button" class="token-save-btn">Save</button>
-              <button id="token-clear-btn" type="button" class="token-clear-btn hidden">Clear</button>
-            </div>
-            <p class="token-hint">
-              <span id="token-status" class="token-status"></span>
-              Paste a <a href="https://github.com/settings/tokens/new?scopes=&description=GitGlance" target="_blank"
-                rel="noopener">Personal Access Token</a> (no scopes needed) for <strong>5,000 req/hr</strong> instead of
-              60.
-            </p>
-          </div>
-        </div>
+
       </div>
     </section>
 

@@ -25,3 +25,7 @@ dist-ssr
 
 # Internal docs
 implementation_plan.md
+.vercel
+.env
+.env*.local
+.env.local

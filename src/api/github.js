@@ -1,39 +1,18 @@
+import { githubGraphql } from './githubGraphQL.js';
+import { getUserStats, getLanguageSize, getContributionCalendar, getCommitsPerRepo } from '../utils/githubParsers.js';
+
 const API_BASE = 'https://api.github.com';
-const TOKEN_KEY = 'gitglance_gh_token';
-
-export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-export function setToken(token) {
-  if (token) {
-    localStorage.setItem(TOKEN_KEY, token.trim());
-  } else {
-    localStorage.removeItem(TOKEN_KEY);
-  }
-}
-
-function buildHeaders() {
-  const headers = { Accept: 'application/vnd.github.v3+json' };
-  const token = getToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  return headers;
-}
 
 async function ghFetch(url) {
-  return fetch(url, { headers: buildHeaders() });
+  // Legacy REST fallback if needed (no token)
+  return fetch(url, { headers: { Accept: 'application/vnd.github.v3+json' } });
 }
 
 export async function fetchProfile(username) {
   const res = await ghFetch(`${API_BASE}/users/${username}`);
   if (res.status === 404) throw new Error('User not found');
   if (res.status === 403) {
-    const isAuthed = !!getToken();
-    throw new Error(
-      isAuthed
-        ? "Rate limit exceeded — your token's quota is exhausted. Try again later."
-        : 'Rate limit exceeded — add a GitHub token below for 5,000 requests/hour.'
-    );
+    throw new Error('Rate limit exceeded. Please try again later.');
   }
   if (!res.ok) throw new Error(`GitHub API error (${res.status})`);
   return res.json();
@@ -218,27 +197,111 @@ export function computeTopRepo(repos) {
 }
 
 export async function fetchFullProfile(username) {
-  const [profile, repos, contributions] = await Promise.all([
-    fetchProfile(username),
-    fetchRepos(username),
-    fetchContributions(username),
-  ]);
+  try {
+    const rawData = await githubGraphql({
+      variables: { username }
+    });
 
+  if (!rawData || !rawData.user) {
+    throw new Error('User not found');
+  }
+
+  const { user, rateLimit } = rawData;
+  const stats = getUserStats(user);
+  const topLanguages = getLanguageSize(user.repositories?.nodes || []);
+  
+  const contributionDays = getContributionCalendar(user.contributionsCollection)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  
+  let longestStreak = 0;
+  let currentStreak = 0;
+  let tempStreak = 0;
+  
+  for (const day of contributionDays) {
+    if (day.contributionCount > 0) {
+      tempStreak++;
+      longestStreak = Math.max(longestStreak, tempStreak);
+    } else {
+      tempStreak = 0;
+    }
+  }
+
+  for (let i = contributionDays.length - 1; i >= 0; i--) {
+    if (contributionDays[i].contributionCount > 0) {
+      currentStreak++;
+    } else if (i < contributionDays.length - 1) {
+      break;
+    }
+  }
+
+  // Map GraphQL data back to the format expected by your UI components
   return {
-    avatar_url: profile.avatar_url,
-    username: profile.login,
-    name: profile.name || profile.login,
-    bio: profile.bio,
-    location: profile.location,
-    company: profile.company,
-    blog: profile.blog,
-    public_repos: profile.public_repos,
-    total_stars: computeTotalStars(repos),
-    followers: profile.followers,
-    following: profile.following,
-    top_languages: computeLanguages(repos),
-    top_repo: computeTopRepo(repos),
-    contributions,
-    created_at: profile.created_at,
+    rate_limit: rateLimit,
+    avatar_url: user.avatarUrl || `https://github.com/${username}.png`,
+    username: username,
+    name: user.name || username,
+    bio: user.bio,
+    location: user.location,
+    company: user.company,
+    blog: user.websiteUrl,
+    public_repos: stats.Repositories || user.repositories?.totalCount || 0,
+    total_stars: stats['Star Earned'] || 0,
+    followers: user.followers?.totalCount || 0,
+    following: user.following?.totalCount || 0,
+    top_languages: topLanguages.map(lang => ({
+      name: lang.name,
+      percentage: Math.round(lang.size),
+      color: getLanguageColor(lang.name)
+    })),
+    // Map stargazerCount to stargazers_count for the existing computeTopRepo function
+    top_repo: computeTopRepo((user.repositories?.nodes || []).map(repo => ({
+      ...repo,
+      stargazers_count: repo.stargazerCount,
+      forks_count: repo.forkCount,
+      fork: repo.isFork
+    }))),
+    contributions: {
+      total: user.contributionsCollection?.totalCommitContributions || 0,
+      current: currentStreak,
+      longest: longestStreak
+    },
+    status: user.status || null,
+    twitterUsername: user.twitterUsername,
+    badges: {
+      isHireable: user.isHireable,
+      isGitHubStar: user.isGitHubStar,
+      isCampusExpert: user.isCampusExpert,
+      isEmployee: user.isEmployee,
+      isDeveloperProgramMember: user.isDeveloperProgramMember,
+    },
+    pinned_repos: (user.pinnedItems?.nodes || []).map(repo => ({
+      name: repo.name,
+      description: repo.description,
+      stargazers_count: repo.stargazerCount,
+      forks_count: repo.forkCount,
+      fork: repo.isFork,
+      language: repo.languages?.edges?.[0]?.node?.name,
+      language_color: repo.languages?.edges?.[0]?.node?.name ? getLanguageColor(repo.languages.edges[0].node.name) : null,
+    })),
+    // Advanced Stats
+    advanced_stats: {
+      organizations: user.organizations?.totalCount || 0,
+      gists: user.gists?.totalCount || 0,
+      pull_requests: user.contributionsCollection?.totalPullRequestContributions || user.pullRequests?.totalCount || 0,
+      issues: user.contributionsCollection?.totalIssueContributions || user.issues?.totalCount || 0,
+      commits: user.contributionsCollection?.totalCommitContributions || 0,
+      sponsors: user.sponsors?.totalCount || 0,
+      sponsoring: user.sponsoring?.totalCount || 0,
+      contributed_to: user.repositoriesContributedTo?.totalCount || 0,
+      packages: user.packages?.totalCount || 0,
+      projects: user.projectsV2?.totalCount || 0,
+      pr_reviews: user.contributionsCollection?.totalPullRequestReviewContributions || 0,
+      repos_created: user.contributionsCollection?.totalRepositoryContributions || 0,
+    },
+    created_at: user.createdAt,
   };
+  } catch (error) {
+    console.error('fetchFullProfile Error:', error);
+    throw error;
+  }
 }
