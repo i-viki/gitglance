@@ -67,10 +67,12 @@ export default async function handler(req, res) {
           totalIssueContributions
           totalRepositoryContributions
           contributionCalendar {
+            totalContributions
             weeks {
               contributionDays {
                 contributionCount
                 contributionLevel
+                color
                 date
               }
             }
